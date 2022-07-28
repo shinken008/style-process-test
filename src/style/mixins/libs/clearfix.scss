@@ -1,0 +1,21 @@
+/**
+ * @example scss
+ *
+ * .element {
+ *   @include clearfix;
+ * }
+ *
+ * // CSS Output
+ * .element::after {
+ *   clear: both;
+ *   content: '';
+ *   display: block;
+ * }
+ */
+@mixin clearfix {
+  &::after {
+    content: '';
+    clear: both;
+    display: block;
+  }
+}

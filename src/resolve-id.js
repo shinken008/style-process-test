@@ -13,8 +13,9 @@ function resolveModule(id, opts) {
   })
 }
 
-module.exports = function (id, base, options) {
-  const paths = options.path
+function resolveId(id, base, options) {
+  const { dir, name, ext: idExt } = path.parse(id)
+  const paths = options.path || []
 
   const resolveOpts = {
     basedir: base,
@@ -38,7 +39,8 @@ module.exports = function (id, base, options) {
     '.rn' + ext,
     ext
   ]
-  const file = utils.findVariant(path.basename(id, ext), exts, [base, ...paths])
+  // const file = utils.findVariant(path.basename(id, ext), exts, [base, ...paths])
+  const file = resolve.sync('./' + path.join(dir, name), { extensions: exts, paths: [__dirname] })
   if (!file) {
     throw new Error(`
       Failed to find ${id}
@@ -62,3 +64,27 @@ module.exports = function (id, base, options) {
       )
     })
 }
+
+resolveId('./ajv/b.less', __dirname, {})
+
+module.exports = resolveId
+
+
+
+// export function loadpkg (dir) {
+//   if (dir === '' || dir === '/') return
+//   if (process.platform === 'win32' && (/^\w:[/\\]*$/).test(dir)) {
+//     return
+//   }
+//   if ((/[/\\]node_modules[/\\]*$/).test(dir)) return
+
+//   var pkgfile = path.join(isDirectory(dir) ? maybeRealpathSync(realpathSync, dir, opts) : dir, 'package.json')
+
+//   if (!isFile(pkgfile)) {
+//     return loadpkg(path.dirname(dir))
+//   }
+
+//   var pkg = readPackageSync(readFileSync, pkgfile)
+
+//   return { pkg: pkg, dir: dir }
+// }

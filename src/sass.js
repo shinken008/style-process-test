@@ -1,35 +1,39 @@
-const sass = require('node-sass');
+const sass = require('sass');
 sass.render({
   file: '/path/to/myFile.scss',
   data: `
-@mixin reset-list {
-  margin: 0;
-  padding: 0;
-  list-style: none;
-}
-
-@mixin horizontal-list {
-  @include reset-list;
-
-  li {
-    display: inline-block;
-    margin: {
-      left: -2px;
-      right: 2em;
+  @use 'sass:math';
+  $font-sizes: (
+    28px: 38px,
+    24px: 32px,
+    22px: 30px,
+    20px: 28px,
+    18px: 24px,
+    16px: 22px,
+    14px: 20px,
+    12px: 16px,
+    10px: 14px
+  ) !default;
+  
+  @function strip-units($number){
+    @return math.div($number, ($number * 0 + 1));
+  }
+  
+  @mixin font(
+    $font-size,
+    $line-height: map-get($map: $font-sizes, $key: $font-size)
+  ) {
+    font-size: $font-size;
+    line-height: $line-height;
+  }
+  
+  
+  @each $font-size, $line-height in $font-sizes {
+    .font-size-h#{strip-units($font-size)} {
+      @include font($font-size, $line-height);
     }
   }
-}
-
-nav ul {
-  @include horizontal-list;
-}
-
-.box {
-  color: red;
-  &_title {
-    line-height: 24px;
-  }
-}
+    
   `,
 }, function (error, result) { // node-style callback from v3.0.0 onwards
   if (error) {
